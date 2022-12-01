@@ -1,3 +1,5 @@
+import boto3
+
 def escribir(valor):
     f = open('cloud/actual.txt', "a")
     f.write('\n')
@@ -5,7 +7,15 @@ def escribir(valor):
     print(valor ,"Added to a IoC")
     f.close()
 
+print('Downloading AWS S3 File...')
 
+s3 = boto3.resource('s3')
+bucket = s3.Bucket('myblacklistfw')
+#for obj in bucket.objects.all():
+s3.meta.client.download_file('myblacklistfw','ioc-fw.txt','cloud/actual.txt')
+print('ioc-fw.txt File Downloaded')
+
+print('\nAnalizando Ioc en Archivo Local:')
 with open('src/ioc.txt', 'r') as f_ioc:
     for l_ioc, line_ioc in enumerate(f_ioc):
         my_ioc = line_ioc.strip()
@@ -21,3 +31,4 @@ with open('src/ioc.txt', 'r') as f_ioc:
                 escribir(my_ioc)
     f_actual.close()
 f_ioc.close()
+
