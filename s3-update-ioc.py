@@ -2,7 +2,7 @@ def escribir(valor):
     f = open('cloud/actual.txt', "a")
     f.write('\n')
     f.write(valor)
-    print(valor ,"Agregado a IoC")
+    print(valor ,"Added to a IoC")
     f.close()
 
 
