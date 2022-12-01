@@ -1,21 +1,26 @@
-import boto3
+# Updating IoC to a s3 txt file
+# files should be 'src/ioc.txt' for a local file 
+# and 'cloud/actual.txt'
+# anyway you can edit folder and names as you wish
 
-def escribir(valor):
+
+import boto3
+#Function for write new lines 
+def WriteFile(valor):
     f = open('cloud/actual.txt', "a")
     f.write('\n')
     f.write(valor)
     print(valor ,"Added to a IoC")
     f.close()
-
+# 1. Download the IoC file from AWS S3
 print('Downloading AWS S3 File...')
-
 s3 = boto3.resource('s3')
 bucket = s3.Bucket('myblacklistfw')
-#for obj in bucket.objects.all():
 s3.meta.client.download_file('myblacklistfw','ioc-fw.txt','cloud/actual.txt')
 print('ioc-fw.txt File Downloaded')
 
-print('\nAnalizando Ioc en Archivo Local:')
+# 2. Find duplicated items between local and s3 File 
+print('\nProccesing Ioc in Local File:')
 with open('src/ioc.txt', 'r') as f_ioc:
     for l_ioc, line_ioc in enumerate(f_ioc):
         my_ioc = line_ioc.strip()
@@ -28,7 +33,16 @@ with open('src/ioc.txt', 'r') as f_ioc:
                     exist = True
                     break
             if exist == False: 
-                escribir(my_ioc)
+                WriteFile(my_ioc)
     f_actual.close()
 f_ioc.close()
 
+# 3. Delete a old s3 ioc file
+print('\nDeleting old ioc-fw.txt from s3 bucket...')
+s3.Object('myblacklistfw','ioc-fw.txt').delete()
+print('ioc-fw.txt file has been deleted')
+
+# 4. Uploading the new s3 ioc file
+print('\nUploading a new ioc-txt to s3 bucket...')
+s3.meta.client.upload_file('src/ioc.txt','myblacklistfw','ioc-fw.txt')
+print('ioc-fw.txt file has been updated')
