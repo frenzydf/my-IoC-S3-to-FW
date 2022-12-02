@@ -1,6 +1,6 @@
-# Updating IoC to a s3 txt file
-# files should be 'src/ioc.txt' for a local file 
-# and 'cloud/actual.txt'
+# Updating Indicator of Compromise to a s3 txt file 
+# files should be 'src/ioc.txt' for a local file with new IoCs 
+# and 'cloud/actual.txt' to download actual IoCs in S3
 # anyway you can edit folder and names as you wish
 
 
