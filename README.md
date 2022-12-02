@@ -16,20 +16,30 @@ Anyway you can edit folder and names as you wish
 ## Technologies
 Project is created with:
 * Python 3.10.8
-* Boto3 lib
+* Boto3 lib python
 AWS Bucket S3
-* AWS CLI. Please check https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+* AWS CLI
+Herdware
+* Firewall FortiGate
 	
 ## Setup
 ### Script 
 - To run this project, use it locally using python3
 - Use folder src/ to put your new IoCs in file named 'ioc.txt'
-- Create a txt file and folder named cloud/ to download your S3 text file 
-
+- Create a txt file and folder named cloud/ to download your S3 text file
+### AWS
+- Create your txt file in your S3 Bucket
+- AWS CLI Please check install steps https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+### FortiGate
+- Configure your external conector
+- Add the IoC resource to your deny policies
 ```
-$ cd ../lorem
-$ npm install
-$ npm start
+$ config system external-resource
+$ edit <object-name>
+$ set type address
+$ set resource <your-s3-file-uri>
+$ next
+$ end
 ```
 ## To Do
 Validation of the new IP address are correctly.
