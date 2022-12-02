@@ -12,11 +12,13 @@ def WriteFile(valor):
     f.write(valor)
     print(valor ,"Added to a IoC")
     f.close()
+
 # 1. Download the IoC file from AWS S3
+bucketname = input("Enter username:")
 print('Downloading AWS S3 File...')
 s3 = boto3.resource('s3')
-bucket = s3.Bucket('myblacklistfw')
-s3.meta.client.download_file('myblacklistfw','ioc-fw.txt','cloud/actual.txt')
+bucket = s3.Bucket(bucketname)
+s3.meta.client.download_file(bucketname,'ioc-fw.txt','cloud/actual.txt')
 print('ioc-fw.txt File Downloaded')
 
 # 2. Find duplicated items between local and s3 File 
@@ -39,10 +41,10 @@ f_ioc.close()
 
 # 3. Delete a old s3 ioc file
 print('\nDeleting old ioc-fw.txt from s3 bucket...')
-s3.Object('myblacklistfw','ioc-fw.txt').delete()
+s3.Object(bucketname,'ioc-fw.txt').delete()
 print('ioc-fw.txt file has been deleted')
 
 # 4. Uploading the new s3 ioc file
 print('\nUploading a new ioc-txt to s3 bucket...')
-s3.meta.client.upload_file('src/ioc.txt','myblacklistfw','ioc-fw.txt')
+s3.meta.client.upload_file('src/ioc.txt',bucketname,'ioc-fw.txt')
 print('ioc-fw.txt file has been updated')
