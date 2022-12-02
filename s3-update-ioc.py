@@ -14,7 +14,7 @@ def WriteFile(valor):
     f.close()
 
 # 1. Download the IoC file from AWS S3
-bucketname = input("Enter username:")
+bucketname = input("Enter bucket name:")
 print('Downloading AWS S3 File...')
 s3 = boto3.resource('s3')
 bucket = s3.Bucket(bucketname)
