@@ -3,9 +3,10 @@
 # and 'cloud/actual.txt' to download actual IoCs in S3
 # anyway you can edit folder and names as you wish
 
-
+import os
 import boto3
 #Function for write new lines 
+
 def WriteFile(valor):
     f = open('cloud/actual.txt', "a")
     f.write('\n')
@@ -14,7 +15,7 @@ def WriteFile(valor):
     f.close()
 
 # 1. Download the IoC file from AWS S3
-bucketname = input("Enter bucket name:")
+bucketname = os.environ.get('IOC_BUCKET')
 print('Downloading AWS S3 File...')
 s3 = boto3.resource('s3')
 bucket = s3.Bucket(bucketname)
@@ -22,6 +23,7 @@ s3.meta.client.download_file(bucketname,'ioc-fw.txt','cloud/actual.txt')
 print('ioc-fw.txt File Downloaded')
 
 # 2. Find duplicated items between local and s3 File 
+ever_exist = False
 print('\nProccesing Ioc in Local File:')
 with open('src/ioc.txt', 'r') as f_ioc:
     for l_ioc, line_ioc in enumerate(f_ioc):
@@ -36,15 +38,19 @@ with open('src/ioc.txt', 'r') as f_ioc:
                     break
             if exist == False: 
                 WriteFile(my_ioc)
+                ever_exist = True
     f_actual.close()
 f_ioc.close()
 
-# 3. Delete a old s3 ioc file
-print('\nDeleting old ioc-fw.txt from s3 bucket...')
-s3.Object(bucketname,'ioc-fw.txt').delete()
-print('ioc-fw.txt file has been deleted')
 
-# 4. Uploading the new s3 ioc file
-print('\nUploading a new ioc-txt to s3 bucket...')
-s3.meta.client.upload_file('src/ioc.txt',bucketname,'ioc-fw.txt')
-print('ioc-fw.txt file has been updated')
+if  ever_exist:
+    # 3. Delete a old s3 ioc file
+    print('\nDeleting old ioc-fw.txt from s3 bucket...')
+    s3.Object(bucketname,'ioc-fw.txt').delete()
+    print('ioc-fw.txt file has been deleted')
+    # 4. Uploading the new s3 ioc file
+    print('\nUploading a new ioc-txt to s3 bucket...')
+    s3.meta.client.upload_file('cloud/actual.txt',bucketname,'ioc-fw.txt')
+    print('ioc-fw.txt file has been updated')
+else:
+    print('\nNo files has been updated')
